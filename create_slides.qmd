@@ -1,0 +1,65 @@
+---
+title: "GRN member organisations"
+format: pptx
+execute:
+  echo: false
+  results: asis
+---
+
+
+
+```{r}
+## Read google sheet
+library("googlesheets4")
+
+gs4_auth()
+
+sheet_url <- "https://docs.google.com/spreadsheets/d/1mU4faIXh4qzXvVBAzLY8U8FGA2Cc8Bv_Xs5ER9lPlwg/edit?gid=634478056#gid=634478056"
+data <- read_sheet(sheet_url, sheet = 2)
+```
+
+```{r}
+## Clean data
+
+## Shorter names
+names(data) <- c('Timestamp', 
+                 'Name', 
+                 'Speaker', 
+                 'Email', 
+                 'Level', 
+                 'Activities_past', 
+                 'Activities_future', 
+                 'Number_active_members',
+                 'Homepage', 
+                 'Field_long', 
+                 'Questions_Comments',
+                 'Field', 
+                 'empty1', 'empty2', 'empty3',
+                 'On website?', 'GRN Processing Status')
+
+## Turn list into vector
+data$Number_active_members <- unlist(data$Number_active_members)
+```
+
+```{r, results='asis'}
+# Loop through rows to generate slides
+
+for (i in seq_len(nrow(data))) {
+
+  cat("
+## ", data$Name[i], "
+
+**Website:** ", data$Homepage[i], "    
+**Speaker:** ", data$Speaker[i], "    
+**Level:** ", data$Level[i], "    
+**# active members:** ", data$Number_active_members[i], "
+
+---
+
+**Activities:**  
+**Past:** ", data$Activities_past[i], "    
+**Future:** ", data$Activities_future[i], "
+", sep = "")
+}
+
+```
